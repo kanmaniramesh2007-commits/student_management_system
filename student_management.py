@@ -1,5 +1,25 @@
 students = []
 
+
+def calculate_grade(marks):
+    if marks >= 90:
+        return "A+"
+    elif marks >= 80:
+        return "A"
+    elif marks >= 70:
+        return "B"
+    elif marks >= 60:
+        return "C"
+    elif marks >= 50:
+        return "D"
+    else:
+        return "F"
+
+
+def calculate_status(marks):
+    return "PASS" if marks >= 50 else "FAIL"
+
+
 while True:
     print("\n===== STUDENT MANAGEMENT SYSTEM =====")
     print("1. Add Student")
@@ -13,45 +33,53 @@ while True:
 
     # Add Student
     if choice == "1":
-        name = input("Enter student name: ")
-        roll_no = input("Enter roll number: ")
-        marks = float(input("Enter marks: "))
+        name = input("Enter student name: ").strip()
+        roll_no = input("Enter roll number: ").strip()
 
-        if marks >= 90:
-            grade = "A+"
-        elif marks >= 80:
-            grade = "A"
-        elif marks >= 70:
-            grade = "B"
-        elif marks >= 60:
-            grade = "C"
-        elif marks >= 50:
-            grade = "D"
-        else:
-            grade = "F"
+        if not name or not roll_no:
+            print("Name and roll number cannot be empty.")
+            continue
 
-        if marks >= 50:
-            status = "PASS"
-        else:
-            status = "FAIL"
+        duplicate = False
+
+        for student in students:
+            if student["roll_no"] == roll_no:
+                duplicate = True
+                break
+
+        if duplicate:
+            print("Roll number already exists!")
+            continue
+
+        try:
+            marks = float(input("Enter marks (0-100): "))
+
+            if marks < 0 or marks > 100:
+                print("Marks must be between 0 and 100.")
+                continue
+
+        except ValueError:
+            print("Please enter valid marks.")
+            continue
 
         student = {
             "name": name,
             "roll_no": roll_no,
             "marks": marks,
-            "grade": grade,
-            "status": status
+            "grade": calculate_grade(marks),
+            "status": calculate_status(marks)
         }
 
         students.append(student)
 
-        print("\nStudent added successfully!")
+        print("Student added successfully!")
+
 
     # View Students
     elif choice == "2":
         print("\n----- STUDENT DETAILS -----")
 
-        if len(students) == 0:
+        if not students:
             print("No students found.")
 
         else:
@@ -71,16 +99,15 @@ while True:
 
             print("Class Average:", round(average, 2))
 
+
     # Search Student
     elif choice == "3":
-        roll_no = input("Enter roll number to search: ")
+        roll_no = input("Enter roll number to search: ").strip()
 
         found = False
 
         for student in students:
-
             if student["roll_no"] == roll_no:
-
                 print("\n----- STUDENT FOUND -----")
                 print("Name:", student["name"])
                 print("Roll Number:", student["roll_no"])
@@ -94,38 +121,40 @@ while True:
         if not found:
             print("Student not found.")
 
+
     # Update Student
     elif choice == "4":
-        roll_no = input("Enter roll number to update: ")
+        roll_no = input("Enter roll number to update: ").strip()
 
         found = False
 
         for student in students:
-
             if student["roll_no"] == roll_no:
 
-                student["name"] = input("Enter new name: ")
-                student["marks"] = float(input("Enter new marks: "))
+                new_name = input("Enter new name: ").strip()
 
-                marks = student["marks"]
+                if not new_name:
+                    print("Name cannot be empty.")
+                    found = True
+                    break
 
-                if marks >= 90:
-                    student["grade"] = "A+"
-                elif marks >= 80:
-                    student["grade"] = "A"
-                elif marks >= 70:
-                    student["grade"] = "B"
-                elif marks >= 60:
-                    student["grade"] = "C"
-                elif marks >= 50:
-                    student["grade"] = "D"
-                else:
-                    student["grade"] = "F"
+                try:
+                    new_marks = float(input("Enter new marks (0-100): "))
 
-                if marks >= 50:
-                    student["status"] = "PASS"
-                else:
-                    student["status"] = "FAIL"
+                    if new_marks < 0 or new_marks > 100:
+                        print("Marks must be between 0 and 100.")
+                        found = True
+                        break
+
+                except ValueError:
+                    print("Please enter valid marks.")
+                    found = True
+                    break
+
+                student["name"] = new_name
+                student["marks"] = new_marks
+                student["grade"] = calculate_grade(new_marks)
+                student["status"] = calculate_status(new_marks)
 
                 print("Student updated successfully!")
 
@@ -135,14 +164,14 @@ while True:
         if not found:
             print("Student not found.")
 
+
     # Delete Student
     elif choice == "5":
-        roll_no = input("Enter roll number to delete: ")
+        roll_no = input("Enter roll number to delete: ").strip()
 
         found = False
 
         for student in students:
-
             if student["roll_no"] == roll_no:
 
                 students.remove(student)
@@ -155,10 +184,15 @@ while True:
         if not found:
             print("Student not found.")
 
+
     # Exit
     elif choice == "6":
         print("\nThank you for using Student Management System!")
         break
 
+
+    # Invalid Choice
     else:
         print("Invalid choice! Please try again.")
+
+
