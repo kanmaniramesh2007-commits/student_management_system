@@ -1,6 +1,5 @@
 students = []
 
-
 def calculate_grade(marks):
     if marks >= 90:
         return "A+"
